@@ -1,0 +1,4 @@
+{
+    "powershell.codeFormatting.preset": "OTBS",
+    "files.eol": "\n"
+}
