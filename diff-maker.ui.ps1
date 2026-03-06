@@ -3,7 +3,7 @@ Add-Type -AssemblyName System.Drawing
 
 # Create the window
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "MulderLoad's Diff Maker"
+$form.Text = "Mulder's Diff Maker"
 $form.Size = New-Object System.Drawing.Size(500, 400)
 $form.StartPosition = "CenterScreen"
 
@@ -37,6 +37,13 @@ $btnBrowseSource.Add_Click({
     if ($path) { $textBoxSource.Text = $path }
 })
 $form.Controls.Add($btnBrowseSource)
+
+$checkBoxXDelta3 = New-Object System.Windows.Forms.CheckBox
+$checkBoxXDelta3.Text = "XDelta3"
+$checkBoxXDelta3.Location = New-Object System.Drawing.Point(10, 135)
+$checkBoxXDelta3.AutoSize = $true
+$checkBoxXDelta3.Checked = $true
+$form.Controls.Add($checkBoxXDelta3)
 
 $labelTarget = New-Object System.Windows.Forms.Label
 $labelTarget.Text = "Target folder :"
@@ -94,21 +101,34 @@ $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Extract diff"
 $btnStart.Location = New-Object System.Drawing.Point(180, 130)
 $btnStart.Size = New-Object System.Drawing.Size(120, 30)
+
 $btnStart.Add_Click({
     $textBoxLog.Clear()
-    
+
     $sourcePath = $textBoxSource.Text
     $targetPath = $textBoxTarget.Text
     $outputPath = $textBoxOutput.Text
 
     try {
-        $output = & ".\diff-maker.ps1" -sourcePath $sourcePath -targetPath $targetPath -outputPath $outputPath
+        $arguments = @{
+            sourceFolder = $sourcePath
+            targetFolder = $targetPath
+            outputFolder = $outputPath
+            "NonInteractive" = $true
+        }
+
+        if (-not $checkBoxXDelta3.Checked) {
+            $arguments["NoXDelta3"] = $true
+        }
+
+        $output = & ".\wip5.ps1" @arguments
+
         $output | ForEach-Object { $textBoxLog.AppendText("$_`r`n") }
     }
     catch {
         $textBoxLog.AppendText("Error: $_`r`n")
     }
 })
-$form.Controls.Add($btnStart)
 
+$form.Controls.Add($btnStart)
 [void]$form.ShowDialog()
