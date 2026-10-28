@@ -121,7 +121,7 @@ $btnStart.Add_Click({
             $arguments["NoXDelta3"] = $true
         }
 
-        $output = & ".\wip5.ps1" @arguments
+        $output = & ".\diff-maker.ps1" @arguments
 
         $output | ForEach-Object { $textBoxLog.AppendText("$_`r`n") }
     }
